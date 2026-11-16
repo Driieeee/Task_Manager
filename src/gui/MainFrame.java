@@ -10,6 +10,7 @@ public class MainFrame {
     public static void main(String[] args) {
         //create JFrame
         JFrame frame = new JFrame();
+
         frame.setSize(600, 600);
         frame.setBounds(100, 600, 600, 600);
         frame.setTitle("DueSmart");
@@ -55,8 +56,17 @@ public class MainFrame {
 
         JButton editBtn = new JButton("Edit");
         editBtn.setBounds(20, 0, 100, 100);
+
         JButton deleteBtn = new JButton("Delete");
         deleteBtn.setBounds(30, 0, 100, 100);
+
+        deleteBtn.addActionListener(e -> {
+            int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete this task?", "Confirm Action", JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
+                JOptionPane.showMessageDialog(frame, "Task Deleted");
+            }
+        });
+
         JButton doneBtn = new JButton("Mark as Done");
         doneBtn.setBounds(40, 0, 100, 100);
 
@@ -87,7 +97,5 @@ public class MainFrame {
         subPanel1.add(doneBtn);
 
         frame.setVisible(true);
-
     }
-
 }
