@@ -1,12 +1,11 @@
 package gui;
 
+import gui.themes.Colors;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.*;
-
-import gui.themes.Colors;
 
 public class MainFrame {
 
@@ -17,7 +16,7 @@ public class MainFrame {
         // create JFrame
         JFrame frame = new JFrame();
 
-        frame.setSize(1000, 600);
+        frame.setSize(1400, 600);
         frame.setTitle("DueSmart");
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
@@ -53,7 +52,7 @@ public class MainFrame {
 
         addBtn.addActionListener(e -> {
             JFrame addTaskFrame = new JFrame("Add Task");
-            addTaskFrame.setSize(600, 700);
+            addTaskFrame.setSize(600, 300);
             addTaskFrame.setLocationRelativeTo(frame);
             addTaskFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -73,9 +72,9 @@ public class MainFrame {
             JTextField deadlineField = new JTextField();
             deadlineField.setFont(inputFont);
 
-            JLabel diffLbl = new JLabel("Difficulty (1-5):");
+            JLabel diffLbl = new JLabel("Difficulty (1-10):");
             diffLbl.setFont(labelFont);
-            String[] difficulties = { "1", "2", "3", "4", "5" };
+            String[] difficulties = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
             JComboBox<String> diffBox = new JComboBox<>(difficulties);
             diffBox.setFont(inputFont);
 
@@ -85,12 +84,21 @@ public class MainFrame {
             JComboBox<String> typeBox = new JComboBox<>(types);
             typeBox.setFont(inputFont);
 
+            JButton clearButton = new JButton("Clear");
+            clearButton.setFont(inputFont);
+            JButton compleButton = new JButton("Done");
+            compleButton.setFont(inputFont);
+
             gridPanel.add(courseLbl);
             gridPanel.add(courseField);
             gridPanel.add(deadlineLbl);
             gridPanel.add(deadlineField);
             gridPanel.add(diffLbl);
+            gridPanel.add(diffBox);
             gridPanel.add(typeLbl);
+            gridPanel.add(typeBox);
+            gridPanel.add(clearButton);
+            gridPanel.add(compleButton);
 
             addTaskFrame.add(gridPanel);
             addTaskFrame.setVisible(true);
