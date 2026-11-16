@@ -8,21 +8,32 @@ public enum TaskStatus{
     DONE("Done");
 
     // attribute
-    private String label;
+    private final String label;
 
     // constructor
     TaskStatus(String label){
         this.label = label;
     }
 
-    public static TaskStatus fromText(String text){
-        for(TaskStatus status : TaskStatus.values()){
-            if(status.name().equalsIgnoreCase(text.trim())
-            || status.label.equalsIgnoreCase(text.trim())){
-                return status;
-            }
+    public String getLabel(){
+        return label;
+    }
+
+    public boolean isDone(){
+        return this == DONE;
+    }
+
+    public static TaskStatus fromCsv(String value){
+        if(value == null){
+            return NOT_STARTED;
         }
-        return NOT_STARTED;
+
+        return switch (value.trim().toUpperCase()){
+            case "NOT_STARTED", "NOT STARTED" -> NOT_STARTED;
+            case "IN_PROGRESS", "IN PROGRESS" -> IN_PROGRESS;
+            case "DONE" -> DONE;
+            default -> NOT_STARTED; 
+        };
     }
 
     @Override 
