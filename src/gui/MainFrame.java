@@ -36,9 +36,32 @@ public class MainFrame {
 
         //create label for panel
         JLabel header = new JLabel("Student Task Manager");
-        header.setBounds(10, 10, 300, 100);
+        header.setBounds(30, 0, 300, 100);
         header.setFont(new Font("Arial", Font.BOLD, 20));
         header.setForeground(Color.WHITE);
+        
+        //--CRUD BUTTONS--
+        JButton addBtn = new JButton("Add Task");
+        addBtn.setBounds(10, 0, 100, 100);
+        
+        addBtn.addActionListener(e -> {
+            String taskName = JOptionPane.showInputDialog(addBtn, "Enter task");
+            
+            if(taskName != null && !taskName.trim().isEmpty()){
+                JOptionPane.showMessageDialog(addBtn, "Successfully Added: " + taskName);
+            }
+        });
+        
+
+        JButton editBtn = new JButton("Edit");
+        editBtn.setBounds(20, 0, 100, 100);
+        JButton deleteBtn = new JButton("Delete");
+        deleteBtn.setBounds(30, 0, 100, 100);
+        JButton doneBtn = new JButton("Mark as Done");
+        doneBtn.setBounds(40, 0, 100, 100);
+
+
+
         //add header label to topPanel
         topPanel.add(header);
         //add panels to frame
@@ -46,8 +69,12 @@ public class MainFrame {
         frame.add(subPanel1);
         frame.add(subPanel2);
 
+        subPanel1.add(addBtn);
+        subPanel1.add(editBtn);
+        subPanel1.add(deleteBtn);
+        subPanel1.add(doneBtn);
+
         frame.setVisible(true);
-        
 
     }
 
