@@ -11,33 +11,32 @@ public class MainFrame {
         //create JFrame
         JFrame frame = new JFrame();
 
-        frame.setSize(600, 600);
-        frame.setBounds(100, 600, 600, 600);
+        frame.setSize(1400, 800);
         frame.setTitle("DueSmart");
+        frame.setLocationRelativeTo(null);
         frame. setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //create topPanel
         JPanel topPanel = new JPanel();
-        topPanel.setBounds(0, 0, 600, 100);
+        topPanel.setBounds(0, 0, 1400, 100);
         topPanel.setBackground(Color.BLUE);
         topPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         topPanel.setLayout(null);
 
         //create subPanels
         JPanel subPanel1 = new JPanel();
-        subPanel1.setBounds(0, 100, 600, 50);
+        subPanel1.setBounds(0, 100, 1400, 50);
         subPanel1.setBackground(Color.YELLOW);
         subPanel1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         JPanel subPanel2 = new JPanel();
-        subPanel2.setBounds(0, 150, 600, 50);
+        subPanel2.setBounds(0, 150, 1400, 50);
         subPanel2.setBackground(Color.GREEN);
         subPanel2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         //create label for panel
         JLabel header = new JLabel("Student Task Manager");
-        header.setBounds(30, 0, 300, 100);
+        header.setBounds(30, 0, 1400, 100);
         header.setFont(new Font("Arial", Font.BOLD, 20));
         header.setForeground(Color.WHITE);
         
@@ -79,7 +78,7 @@ public class MainFrame {
         JTable table = new JTable(data, columnName);
         JScrollPane scroll = new JScrollPane(table);
 
-        scroll.setBounds(0, 220, 585, 360);
+        scroll.setBounds(0, 220, 1400, 600);
         frame.add(scroll);
 
         frame.add(scroll);
@@ -97,5 +96,5 @@ public class MainFrame {
         subPanel1.add(doneBtn);
 
         frame.setVisible(true);
-    }
+    }   
 }
