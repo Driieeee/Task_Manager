@@ -39,11 +39,12 @@ public enum Difficulty {
     // 
     public static Difficulty fromText(String text){
         for(Difficulty d : Difficulty.values()){
-            if(d.name().equalsIgnoreCase(text.trim())){
+            if(d.name().equalsIgnoreCase(text.trim())
+            || d.label.equals(text.trim())){
                 return d;
             }
         }
-        return LEVEL_5; // defualt
+        return LEVEL_5; // default
     }
 
     @Override 
