@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridLayout;
 import javax.swing.*;
 
 
@@ -45,11 +46,48 @@ public class MainFrame {
         addBtn.setBounds(10, 0, 100, 100);
         
         addBtn.addActionListener(e -> {
-            String taskName = JOptionPane.showInputDialog(addBtn, "Enter task");
-            
-            if(taskName != null && !taskName.trim().isEmpty()){
-                JOptionPane.showMessageDialog(addBtn, "Successfully Added: " + taskName);
-            }
+            JFrame addTaskFrame = new JFrame("Add Task");
+            addTaskFrame.setSize(600, 700);
+            addTaskFrame.setLocationRelativeTo(frame);
+            addTaskFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            JPanel gridPanel = new JPanel(new GridLayout(0, 2, 10, 15));
+            gridPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            Font labelFont = new Font("Arial", Font.BOLD, 14);
+            Font inputFont = new Font("Arial", Font.PLAIN, 14);
+
+            JLabel courseLbl = new JLabel("Course:");
+            courseLbl.setFont(labelFont);
+            JTextField courseField = new JTextField();
+            courseField.setFont(inputFont);
+
+            JLabel deadlineLbl = new JLabel("Deadline (MM/DD/YY):");
+            deadlineLbl.setFont(labelFont);
+            JTextField deadlineField = new JTextField();
+            deadlineField.setFont(inputFont);
+
+            JLabel diffLbl = new JLabel("Difficulty (1-5):");
+            diffLbl.setFont(labelFont);
+            String[] difficulties = {"1", "2", "3", "4", "5"};
+            JComboBox<String> diffBox = new JComboBox<>(difficulties);
+            diffBox.setFont(inputFont);
+
+            JLabel typeLbl = new JLabel("Type:");
+            typeLbl.setFont(labelFont);
+            String[] types = {"Exam", "Assignment", "Project", "Quiz"};
+            JComboBox<String> typeBox = new JComboBox<>(types);
+            typeBox.setFont(inputFont);
+
+            gridPanel.add(courseLbl);
+            gridPanel.add(courseField);
+            gridPanel.add(deadlineLbl);
+            gridPanel.add(deadlineField);
+            gridPanel.add(diffLbl);
+            gridPanel.add(typeLbl);
+
+            addTaskFrame.add(gridPanel);
+            addTaskFrame.setVisible(true);
         });
         
 
