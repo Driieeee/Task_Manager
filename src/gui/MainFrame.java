@@ -1,7 +1,7 @@
 package gui;
+
 import java.awt.Color;
 import java.awt.Font;
-
 import javax.swing.*;
 
 
@@ -60,7 +60,19 @@ public class MainFrame {
         JButton doneBtn = new JButton("Mark as Done");
         doneBtn.setBounds(40, 0, 100, 100);
 
+        // Data table
+        String[] columnName = {"Course", "Deadline", "Difficulty", "Type", "Priority"};
+        String [][] data = {
+            {"ADET", "10/20/22", "5", "Exam", "90"},
+            {"", "", "", "", ""}
+        };
+        JTable table = new JTable(data, columnName);
+        JScrollPane scroll = new JScrollPane(table);
 
+        scroll.setBounds(0, 220, 585, 360);
+        frame.add(scroll);
+
+        frame.add(scroll);
 
         //add header label to topPanel
         topPanel.add(header);
