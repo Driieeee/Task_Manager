@@ -11,38 +11,49 @@ public class MainFrame {
 
     public static void main(String[] args) {
 
-        // colors
+        // fonts
+        Font labelFont = new Font("Arial", Font.BOLD, 14);
+        Font inputFont = new Font("Arial", Font.PLAIN, 14);
 
         // create JFrame
         JFrame frame = new JFrame();
 
-        frame.setSize(1400, 600);
+        frame.setSize(1000, 630); // FIX: was 600, the title bar cut off the bottom panel
         frame.setTitle("DueSmart");
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel topPanel = new JPanel();
-        topPanel.setBounds(0, 0, 1400, 100);
+        topPanel.setBounds(0, 0, 1000, 100);
         topPanel.setBackground(Colors.TOP_PANEL);
         topPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         topPanel.setLayout(null);
 
         // create subPanels
         JPanel subPanel1 = new JPanel();
-        subPanel1.setBounds(0, 100, 1400, 50);
+        subPanel1.setBounds(0, 100, 1000, 50);
         subPanel1.setBackground(Colors.SUB_PANEL1);
         subPanel1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         subPanel1.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         JPanel subPanel2 = new JPanel();
-        subPanel2.setBounds(0, 150, 1400, 50);
+        subPanel2.setBounds(0, 500, 1000, 105);
         subPanel2.setBackground(Colors.SUB_PANEL2);
         subPanel2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
+        // create comboBoxes
+        String[] courses = { "Discrete Structures", "Lineat Algebra" };
+        JComboBox<String> courseBox = new JComboBox<>(courses);
+        courseBox.setFont(inputFont);
+
+        String[] typeTask = { "Exam", "Assignment", "Project", "Quiz" };
+        JComboBox<String> typeTaskBox = new JComboBox<>(typeTask);
+        typeTaskBox.setFont(inputFont);
+
         // create label for panel
         JLabel header = new JLabel("Student Task Manager");
-        header.setBounds(30, 0, 1400, 100);
+        header.setBounds(30, 0, 1000, 100);
         header.setFont(new Font("Arial", Font.BOLD, 20));
         header.setForeground(Color.WHITE);
 
@@ -52,15 +63,17 @@ public class MainFrame {
 
         addBtn.addActionListener(e -> {
             JFrame addTaskFrame = new JFrame("Add Task");
-            addTaskFrame.setSize(600, 300);
+            addTaskFrame.setSize(600, 400); // FIX: was 300, too short for 6 rows
             addTaskFrame.setLocationRelativeTo(frame);
             addTaskFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             JPanel gridPanel = new JPanel(new GridLayout(0, 2, 10, 15));
             gridPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-            Font labelFont = new Font("Arial", Font.BOLD, 14);
-            Font inputFont = new Font("Arial", Font.PLAIN, 14);
+            JLabel taskLbl = new JLabel("Tasks:");
+            taskLbl.setFont(labelFont);
+            JTextField taskField = new JTextField();
+            taskField.setFont(inputFont);
 
             JLabel courseLbl = new JLabel("Course:");
             courseLbl.setFont(labelFont);
@@ -89,6 +102,8 @@ public class MainFrame {
             JButton compleButton = new JButton("Done");
             compleButton.setFont(inputFont);
 
+            gridPanel.add(taskLbl);
+            gridPanel.add(taskField);
             gridPanel.add(courseLbl);
             gridPanel.add(courseField);
             gridPanel.add(deadlineLbl);
@@ -122,18 +137,18 @@ public class MainFrame {
         doneBtn.setBounds(50, 10, 100, 100);
 
         // Data table
-        String[] columnName = { "Course", "Deadline", "Difficulty", "Type", "Priority" };
+        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority" };
         String[][] data = {
-                { "ADET", "10/20/22", "5", "Exam", "90" },
-                { "", "", "", "", "" }
+                { "Okay test", "ADET", "10/20/22", "5", "Exam", "90" },
+                { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99" },
+                { "", "", "", "", "", "" } // FIX: had 5 values for 6 columns, which throws an error while painting
         };
         JTable table = new JTable(data, columnName);
         JScrollPane scroll = new JScrollPane(table);
 
-        scroll.setBounds(0, 220, 1400, 600);
+        scroll.setBounds(4, 154, 992, 342);
         frame.add(scroll);
 
-        frame.add(scroll);
 
         // add header label to topPanel
         topPanel.add(header);
@@ -141,11 +156,14 @@ public class MainFrame {
         frame.add(topPanel);
         frame.add(subPanel1);
         frame.add(subPanel2);
-
+        //add buttons to subPanel
         subPanel1.add(addBtn);
         subPanel1.add(editBtn);
         subPanel1.add(deleteBtn);
         subPanel1.add(doneBtn);
+        //add comboBoxes to subPanel1
+        subPanel1.add(courseBox);
+        subPanel1.add(typeTaskBox);
 
         frame.setVisible(true);
     }
