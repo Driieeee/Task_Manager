@@ -5,7 +5,10 @@ import java.awt.GridLayout;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import repository.StudentRepository;
+
 import java.util.function.Consumer;
+import java.util.*;
 
 public class TaskFormDialog {
 
@@ -74,7 +77,7 @@ public class TaskFormDialog {
             String priority = level >= 8 ? "High" : level >= 5 ? "Medium" : "Low";
             String status = "Pending";
 
-            onTaskAdded.accept(new Object[] { taskName, course, deadline, difficulty, type, priority });
+            onTaskAdded.accept(new Object[] { taskName, course, deadline, difficulty, type, priority, status });
             IdGenerator createKey = new IdGenerator();
             
             addTaskFrame.dispose();
@@ -127,13 +130,15 @@ public class TaskFormDialog {
 
                 int modelRow = taskTable.convertRowIndexToModel(selectedRow);
                 model.removeRow(modelRow);
-
-                JOptionPane.showMessageDialog(
+                
+                if (StudentRepository.saveAll(readAllRows(model))) {
+                    JOptionPane.showMessageDialog(
                     parentFrame,
                     "Task successfully deleted!",
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE
                 );
+                }
             }
         });
 
@@ -181,5 +186,17 @@ public class TaskFormDialog {
                 JOptionPane.INFORMATION_MESSAGE
             );
         });
+    }
+
+    private static List<Object[]> readAllRows(DefaultTableModel model) {
+        List<Object[]> rows = new ArrayList<>();
+        for (int r = 0; r < model.getRowCount(); r++) {
+            Object[] row = new Object[model.getColumnCount()];
+            for (int c = 0; c < model.getColumnCount(); c++) {
+                row[c] = model.getValueAt(r, c);
+            }
+            rows.add(row);
+        }
+        return rows;
     }
 }

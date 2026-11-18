@@ -151,4 +151,29 @@ public class StudentRepository {
         values.add(current.toString());
         return values.toArray(new String[0]);
     }
+
+    // overwrites the .csv file 
+    public static boolean saveAll(List<Object[]> rows) {
+        Path path = Path.of(FILE_NAME);
+
+        try {
+            if (path.getParent() != null) {
+                Files.createDirectories(path.getParent());
+            }
+
+            try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+                writer.write(HEADER);
+                writer.newLine();;
+
+                for(Object[] row : rows) {
+                    writer.write(toCsvLine(row));
+                    writer.newLine();
+                }
+            }
+            return true;
+        }
+        catch (IOException | RuntimeException e) {
+            return false;
+        }
+    }
 }
