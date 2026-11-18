@@ -73,7 +73,7 @@ public enum Difficulty {
             default -> DEFAULT;
         };
     }
-    
+
     @Override 
     public String toString(){
         return label;
