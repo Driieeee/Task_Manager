@@ -3,9 +3,12 @@ package gui;
 import services.*;
 
 import gui.themes.Colors;
+import repository.*;
+
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -59,16 +62,20 @@ public class MainFrame {
         header.setFont(new Font("Arial", Font.BOLD, 20));
         header.setForeground(Color.WHITE);
 
-        // -- DATA TABLE SETUP (Using hardcoded values, loadTasks removed) --
-        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority"};
-        
-        String[][] data = {
-            { "Okay test", "ADET", "10/20/22", "5", "Exam", "90" },
-            { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99" },
-            { "", "", "", "", "", "" }
-        };
+        // -- DATA TABLE SETUP --
+        // These are the column headers. The initial row count is 0 because the rows
+        // come from the CSV file instead of being typed in here.
+        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority" };
+        DefaultTableModel tableModel = new DefaultTableModel(columnName, 0);
 
-        DefaultTableModel tableModel = new DefaultTableModel(data, columnName);
+        // Load saved tasks when the app opens. loadTasks() returns an empty list if
+        // the CSV does not exist yet, so nothing special is needed on first launch.
+        for (String[] row : StudentRepository.loadTasks()) {
+            tableModel.addRow(row);
+        }
+
+        // The JTable is the part that actually displays the model. Without this line
+        // the scroll pane would be empty and no tasks would be visible.
         JTable table = new JTable(tableModel);
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBounds(4, 154, 992, 342);
@@ -77,11 +84,18 @@ public class MainFrame {
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
         addBtn.setBounds(20, 10, 100, 100);
-        addBtn.addActionListener(e -> TaskFormDialog.show(frame, row -> tableModel.addRow(row)));
-
         JButton editBtn = new JButton("Edit");
         editBtn.setBounds(30, 10, 100, 100);
         editBtn.setFont(inputFont);
+        // When a task is added: show it in the table AND save it to the CSV.
+        // appendTask() returns false if the save failed; no exception reaches this code.
+        addBtn.addActionListener(e -> TaskFormDialog.show(frame, row -> {
+            tableModel.addRow(row);
+            if (!StudentRepository.appendTask(row)) {
+                JOptionPane.showMessageDialog(frame, "Could not save task.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }));
 
         JButton deleteBtn = new JButton("Delete");
         deleteBtn.setBounds(40, 10, 100, 100);
