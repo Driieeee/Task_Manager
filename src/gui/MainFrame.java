@@ -5,12 +5,12 @@ import services.*;
 import gui.themes.Colors;
 import repository.*;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 
 public class MainFrame {
 
@@ -52,7 +52,7 @@ public class MainFrame {
         JComboBox<String> courseBox = new JComboBox<>(courses);
         courseBox.setFont(inputFont);
 
-        String[] typeTask = { "Exam", "Assignment", "Project", "Quiz" };
+        String[] typeTask = {"Assignment", "Exam", "Laboratory Exercise", "Long Quiz", "Project", "Quiz", "Summative", "Other" };
         JComboBox<String> typeTaskBox = new JComboBox<>(typeTask);
         typeTaskBox.setFont(inputFont);
 
@@ -78,8 +78,19 @@ public class MainFrame {
         // the scroll pane would be empty and no tasks would be visible.
         JTable table = new JTable(tableModel);
         JScrollPane scroll = new JScrollPane(table);
-        scroll.setBounds(4, 154, 992, 342);
-        frame.add(scroll);
+        scroll.setBounds(4, 124, 992, 370);
+
+        // customize table
+        table.setFont(inputFont);
+        table.setRowHeight(28);
+        table.getTableHeader().setFont(labelFont);
+        table.setAutoCreateRowSorter(true); // sort by priority
+
+        // center numeric columns
+        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+        center.setHorizontalAlignment(SwingConstants.CENTER);
+        table.getColumnModel().getColumn(3).setCellRenderer(center);
+        table.getColumnModel().getColumn(5).setCellRenderer(center);
 
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
@@ -89,7 +100,7 @@ public class MainFrame {
         editBtn.setFont(inputFont);
         // When a task is added: show it in the table AND save it to the CSV.
         // appendTask() returns false if the save failed; no exception reaches this code.
-        addBtn.addActionListener(e -> TaskFormDialog.show(frame, row -> {
+        addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, row -> {
             tableModel.addRow(row);
             if (!StudentRepository.appendTask(row)) {
                 JOptionPane.showMessageDialog(frame, "Could not save task.",
@@ -101,13 +112,7 @@ public class MainFrame {
         deleteBtn.setBounds(40, 10, 100, 100);
         deleteBtn.setFont(inputFont);
 
-        deleteBtn.addActionListener(e -> {
-            int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete this task?",
-                    "Confirm Action", JOptionPane.YES_NO_OPTION);
-            if (choice == JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(frame, "Task Deleted");
-            }
-        });
+        TaskFormDialog.showDelete(frame, table, deleteBtn);
 
         JButton doneBtn = new JButton("Mark as Done");
         doneBtn.setBounds(50, 10, 100, 100);
@@ -116,6 +121,9 @@ public class MainFrame {
         doneBtn.setOpaque(true);
         doneBtn.setBackground(Colors.YELLOW);
         doneBtn.setBorderPainted(false);
+
+        //position buttons in subPanel1
+        subPanel1.setLayout(new BorderLayout());
 
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
         left.setOpaque(false);
@@ -129,23 +137,17 @@ public class MainFrame {
         right.add(courseBox);
         right.add(typeTaskBox);
 
+        subPanel1.add(left, BorderLayout.WEST);
+        subPanel1.add(right, BorderLayout.EAST);
+
         // add header label to topPanel
         topPanel.add(header);
-        
+
         // add panels to frame
         frame.add(topPanel);
         frame.add(subPanel1);
         frame.add(subPanel2);
-        
-        // add buttons to subPanel1
-        subPanel1.add(addBtn);
-        subPanel1.add(editBtn);
-        subPanel1.add(deleteBtn);
-        subPanel1.add(doneBtn);
-        
-        // add comboBoxes to subPanel1
-        subPanel1.add(courseBox);
-        subPanel1.add(typeTaskBox);
+        frame.add(scroll);
 
         frame.setVisible(true);
     }
