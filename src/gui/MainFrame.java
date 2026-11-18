@@ -6,8 +6,9 @@ import gui.themes.Colors;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.BorderLayout;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 
 public class MainFrame {
 
@@ -71,12 +72,24 @@ public class MainFrame {
         DefaultTableModel tableModel = new DefaultTableModel(data, columnName);
         JTable table = new JTable(tableModel);
         JScrollPane scroll = new JScrollPane(table);
-        scroll.setBounds(4, 154, 992, 342);
-        frame.add(scroll);
+        scroll.setBounds(4, 124, 992, 370);
+
+        // customize table
+        table.setFont(inputFont);
+        table.setRowHeight(28);
+        table.getTableHeader().setFont(labelFont);
+        table.setAutoCreateRowSorter(true); // sort by priority
+
+        // center numeric columns
+        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+        center.setHorizontalAlignment(SwingConstants.CENTER);
+        table.getColumnModel().getColumn(3).setCellRenderer(center);
+        table.getColumnModel().getColumn(5).setCellRenderer(center);
 
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
         addBtn.setBounds(20, 10, 100, 100);
+        addBtn.setFont(inputFont);
         addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, row -> tableModel.addRow(row)));
 
         JButton editBtn = new JButton("Edit");
@@ -97,6 +110,9 @@ public class MainFrame {
         doneBtn.setBackground(Colors.YELLOW);
         doneBtn.setBorderPainted(false);
 
+                //position buttons in subPanel1
+        subPanel1.setLayout(new BorderLayout());
+
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
         left.setOpaque(false);
         left.add(addBtn);
@@ -109,23 +125,17 @@ public class MainFrame {
         right.add(courseBox);
         right.add(typeTaskBox);
 
+        subPanel1.add(left, BorderLayout.WEST);
+        subPanel1.add(right, BorderLayout.EAST);
+
         // add header label to topPanel
         topPanel.add(header);
-        
+
         // add panels to frame
         frame.add(topPanel);
         frame.add(subPanel1);
         frame.add(subPanel2);
-        
-        // add buttons to subPanel1
-        subPanel1.add(addBtn);
-        subPanel1.add(editBtn);
-        subPanel1.add(deleteBtn);
-        subPanel1.add(doneBtn);
-        
-        // add comboBoxes to subPanel1
-        subPanel1.add(courseBox);
-        subPanel1.add(typeTaskBox);
+        frame.add(scroll);
 
         frame.setVisible(true);
     }
