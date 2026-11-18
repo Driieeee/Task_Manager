@@ -1,13 +1,14 @@
 package gui;
 
+import services.*;
+
 import gui.themes.Colors;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.BorderLayout;
-import javax.swing.table.*;
+import java.awt.Font;
 import javax.swing.*;
+import javax.swing.table.*;
 
 public class MainFrame {
 
@@ -20,7 +21,7 @@ public class MainFrame {
         // create JFrame
         JFrame frame = new JFrame();
 
-        frame.setSize(1000, 630); // FIX: was 600, the title bar cut off the bottom panel
+        frame.setSize(1000, 630); 
         frame.setTitle("DueSmart");
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
@@ -49,7 +50,7 @@ public class MainFrame {
         JComboBox<String> courseBox = new JComboBox<>(courses);
         courseBox.setFont(inputFont);
 
-        String[] typeTask = { "Exam", "Assignment", "Project", "Quiz" };
+        String[] typeTask = {"Assignment", "Exam", "Laboratory Exercise", "Long Quiz", "Project", "Quiz", "Summative", "Other" };
         JComboBox<String> typeTaskBox = new JComboBox<>(typeTask);
         typeTaskBox.setFont(inputFont);
 
@@ -59,111 +60,6 @@ public class MainFrame {
         header.setFont(new Font("Arial", Font.BOLD, 20));
         header.setForeground(Color.WHITE);
 
-        // --CRUD BUTTONS--
-        JButton addBtn = new JButton("Add Task");
-        addBtn.setBounds(20, 10, 100, 100);
-        addBtn.setFont(inputFont);
-
-        addBtn.addActionListener(e -> {
-            JFrame addTaskFrame = new JFrame("Add Task");
-            addTaskFrame.setSize(600, 400); // FIX: was 300, too short for 6 rows
-            addTaskFrame.setLocationRelativeTo(frame);
-            addTaskFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-            JPanel gridPanel = new JPanel(new GridLayout(0, 2, 10, 15));
-            gridPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-            JLabel taskLbl = new JLabel("Tasks:");
-            taskLbl.setFont(labelFont);
-            JTextField taskField = new JTextField();
-            taskField.setFont(inputFont);
-
-            JLabel courseLbl = new JLabel("Course:");
-            courseLbl.setFont(labelFont);
-            JTextField courseField = new JTextField();
-            courseField.setFont(inputFont);
-
-            JLabel deadlineLbl = new JLabel("Deadline (MM/DD/YY):");
-            deadlineLbl.setFont(labelFont);
-            JTextField deadlineField = new JTextField();
-            deadlineField.setFont(inputFont);
-
-            JLabel diffLbl = new JLabel("Difficulty (1-10):");
-            diffLbl.setFont(labelFont);
-            String[] difficulties = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
-            JComboBox<String> diffBox = new JComboBox<>(difficulties);
-            diffBox.setFont(inputFont);
-
-            JLabel typeLbl = new JLabel("Type:");
-            typeLbl.setFont(labelFont);
-            String[] types = { "Exam", "Assignment", "Project", "Quiz" };
-            JComboBox<String> typeBox = new JComboBox<>(types);
-            typeBox.setFont(inputFont);
-
-            JButton clearButton = new JButton("Clear");
-            clearButton.setFont(inputFont);
-            JButton compleButton = new JButton("Done");
-            compleButton.setFont(inputFont);
-
-            gridPanel.add(taskLbl);
-            gridPanel.add(taskField);
-            gridPanel.add(courseLbl);
-            gridPanel.add(courseField);
-            gridPanel.add(deadlineLbl);
-            gridPanel.add(deadlineField);
-            gridPanel.add(diffLbl);
-            gridPanel.add(diffBox);
-            gridPanel.add(typeLbl);
-            gridPanel.add(typeBox);
-            gridPanel.add(clearButton);
-            gridPanel.add(compleButton);
-
-            addTaskFrame.add(gridPanel);
-            addTaskFrame.setVisible(true);
-        });
-
-        JButton editBtn = new JButton("Edit");
-        editBtn.setBounds(30, 10, 100, 100);
-        editBtn.setFont(inputFont);
-
-        JButton deleteBtn = new JButton("Delete");
-        deleteBtn.setBounds(40, 10, 100, 100);
-        deleteBtn.setFont(inputFont);
-
-        deleteBtn.addActionListener(e -> {
-            int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete this task?",
-                    "Confirm Action", JOptionPane.YES_NO_OPTION);
-            if (choice == JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(frame, "Task Deleted");
-            }
-        });
-
-        JButton doneBtn = new JButton("Mark as Done");
-        doneBtn.setBounds(50, 10, 100, 100);
-        doneBtn.setFont(inputFont);
-        doneBtn.setContentAreaFilled(false);
-        doneBtn.setOpaque(true);
-        doneBtn.setBackground(Colors.YELLOW);
-        doneBtn.setBorderPainted(false);
-
-        //position buttons in subPanel1
-        subPanel1.setLayout(new BorderLayout());
-
-        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
-        left.setOpaque(false);
-        left.add(addBtn);
-        left.add(editBtn);
-        left.add(deleteBtn);
-        left.add(doneBtn);
-
-        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
-        right.setOpaque(false);
-        right.add(courseBox);
-        right.add(typeTaskBox);
-
-        subPanel1.add(left, BorderLayout.WEST);
-        subPanel1.add(right, BorderLayout.EAST);
-
         // Data table
         String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority", "Status" };
         String[][] data = {
@@ -171,6 +67,7 @@ public class MainFrame {
                 { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99", "In Progress"},
                 { "", "", "", "", "", "", "" } // FIX: had 5 values for 6 columns, which throws an error while painting
         };
+        DefaultTableModel tableModel = new DefaultTableModel(data, columnName);
         JTable table = new JTable(data, columnName);
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBounds(4, 124, 992, 370);
@@ -187,8 +84,48 @@ public class MainFrame {
         table.getColumnModel().getColumn(3).setCellRenderer(center);
         table.getColumnModel().getColumn(5).setCellRenderer(center);
 
+        // -- CRUD BUTTONS --
+        JButton addBtn = new JButton("Add Task");
+        addBtn.setBounds(20, 10, 100, 100);
+        addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, row -> tableModel.addRow(row)));
+
+        JButton editBtn = new JButton("Edit");
+        editBtn.setBounds(30, 10, 100, 100);
+        editBtn.setFont(inputFont);
+
+        JButton deleteBtn = new JButton("Delete");
+        deleteBtn.setBounds(40, 10, 100, 100);
+        deleteBtn.setFont(inputFont);
+
+        TaskFormDialog.showDelete(frame, table, deleteBtn);
+
+        JButton doneBtn = new JButton("Mark as Done");
+        doneBtn.setBounds(50, 10, 100, 100);
+        doneBtn.setFont(inputFont);
+        doneBtn.setContentAreaFilled(false);
+        doneBtn.setOpaque(true);
+        doneBtn.setBackground(Colors.YELLOW);
+        doneBtn.setBorderPainted(false);
+
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
+        left.setOpaque(false);
+        left.add(addBtn);
+        left.add(editBtn);
+        left.add(deleteBtn);
+        left.add(doneBtn);
+
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
+        right.setOpaque(false);
+        right.add(courseBox);
+        right.add(typeTaskBox);
+
+        subPanel1.add(left, BorderLayout.WEST);
+        subPanel1.add(right, BorderLayout.EAST);
+
+
         // add header label to topPanel
         topPanel.add(header);
+        
         // add panels to frame
         frame.add(topPanel);
         frame.add(subPanel1);
