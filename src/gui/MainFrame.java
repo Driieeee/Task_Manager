@@ -65,7 +65,7 @@ public class MainFrame {
         // -- DATA TABLE SETUP --
         // These are the column headers. The initial row count is 0 because the rows
         // come from the CSV file instead of being typed in here.
-        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority" };
+        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority", "Status"};
         DefaultTableModel tableModel = new DefaultTableModel(columnName, 0);
 
         // Load saved tasks when the app opens. loadTasks() returns an empty list if
@@ -121,6 +121,8 @@ public class MainFrame {
         doneBtn.setOpaque(true);
         doneBtn.setBackground(Colors.YELLOW);
         doneBtn.setBorderPainted(false);
+
+        TaskFormDialog.showDone(frame, table, doneBtn);
 
         //position buttons in subPanel1
         subPanel1.setLayout(new BorderLayout());

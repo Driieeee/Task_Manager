@@ -14,7 +14,7 @@ public class TaskFormDialog {
         Font inputFont = new Font("Arial", Font.PLAIN, 14);
 
         JFrame addTaskFrame = new JFrame("Add Task");
-        addTaskFrame.setSize(600, 400); 
+        addTaskFrame.setSize(600, 400);
         addTaskFrame.setLocationRelativeTo(parentFrame);
         addTaskFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -72,6 +72,7 @@ public class TaskFormDialog {
 
             int level = Integer.parseInt(difficulty);
             String priority = level >= 8 ? "High" : level >= 5 ? "Medium" : "Low";
+            String status = "Pending";
 
             onTaskAdded.accept(new Object[] { taskName, course, deadline, difficulty, type, priority });
             IdGenerator createKey = new IdGenerator();
@@ -96,21 +97,20 @@ public class TaskFormDialog {
         addTaskFrame.setVisible(true);
     }
 
-    public static void showDelete(JFrame parentFrame, JTable taskTable, JButton deleteButton){
-        Font inputFont = new Font("Arial", Font.PLAIN, 14);
+    public static void showDelete(JFrame parentFrame, JTable taskTable, JButton deleteButton) {
 
         deleteButton.addActionListener(e -> {
-            
+
             int selectedRow = taskTable.getSelectedRow();
 
-            if(selectedRow == -1){
+            if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(
                     parentFrame,
                     "Please select a task to delete.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE
                 );
-                return ;
+                return;
             }
 
             int confirm = JOptionPane.showConfirmDialog(
@@ -121,21 +121,65 @@ public class TaskFormDialog {
                 JOptionPane.WARNING_MESSAGE
             );
 
-            if(confirm == JOptionPane.YES_OPTION){
+            if (confirm == JOptionPane.YES_OPTION) {
 
                 DefaultTableModel model = (DefaultTableModel) taskTable.getModel();
 
                 int modelRow = taskTable.convertRowIndexToModel(selectedRow);
-                               model.removeRow(modelRow);
+                model.removeRow(modelRow);
 
                 JOptionPane.showMessageDialog(
-                    parentFrame, 
+                    parentFrame,
                     "Task successfully deleted!",
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE
                 );
             }
         });
-    parentFrame.add(deleteButton);
+
+        parentFrame.add(deleteButton);
+    }
+
+    public static void showDone(JFrame parentFrame, JTable taskTable, JButton doneButton) {
+
+        doneButton.addActionListener(e -> {
+
+            int selectedRow = taskTable.getSelectedRow();
+
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(
+                    parentFrame,
+                    "Please select a task to mark as done.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            DefaultTableModel model = (DefaultTableModel) taskTable.getModel();
+
+            int modelRow = taskTable.convertRowIndexToModel(selectedRow);
+
+            String status = String.valueOf(model.getValueAt(modelRow, 6));
+
+            if ("Done".equalsIgnoreCase(status.trim())) {
+                JOptionPane.showMessageDialog(
+                    parentFrame,
+                    "This task is already completed.",
+                    "Information",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                return;
+            }
+
+            model.setValueAt("Done", modelRow, 6);
+
+            JOptionPane.showMessageDialog(
+                parentFrame,
+                "Task Done!",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        });
     }
 }

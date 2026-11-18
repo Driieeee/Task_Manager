@@ -24,7 +24,7 @@ public class StudentRepository {
     private static final String FILE_NAME = "src/data/tasks.csv";
 
     // The first line of the CSV. It names the columns, and is written when the file is new.
-    private static final String HEADER = "Task,Course,Deadline,Difficulty,Type,Priority";
+    private static final String HEADER = "Task,Course,Deadline,Difficulty,Type,Priority,Status";
 
     /**
      * Reads every task from the CSV file.
