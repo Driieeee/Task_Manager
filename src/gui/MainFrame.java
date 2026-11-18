@@ -59,15 +59,14 @@ public class MainFrame {
         header.setFont(new Font("Arial", Font.BOLD, 20));
         header.setForeground(Color.WHITE);
 
-        // -- DATA TABLE SETUP (Moved up so it's accessible by buttons) --
+        // -- DATA TABLE SETUP (Using hardcoded values, loadTasks removed) --
         String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority"};
         
-        // Load initial data from repository (falls back safely if file doesn't exist)
         String[][] data = {
-                  { "Okay test", "ADET", "10/20/22", "5", "Exam", "90" },
-                  { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99" },
-                  { "", "", "", "", "", "" } // FIX: maintained 6 columns to prevent painting errors
-       };
+            { "Okay test", "ADET", "10/20/22", "5", "Exam", "90" },
+            { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99" },
+            { "", "", "", "", "", "" }
+        };
 
         DefaultTableModel tableModel = new DefaultTableModel(data, columnName);
         JTable table = new JTable(tableModel);
@@ -80,6 +79,7 @@ public class MainFrame {
         addBtn.setBounds(20, 10, 100, 100);
         addBtn.addActionListener(e -> {
             TaskFormDialog.show(frame, () -> {
+                // Callback left empty for now since loading from file isn't needed yet
             });
         });
 
