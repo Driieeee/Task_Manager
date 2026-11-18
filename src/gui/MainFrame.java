@@ -1,13 +1,13 @@
 package gui;
 
+import services.*;
+
 import gui.themes.Colors;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.BorderLayout;
-import javax.swing.table.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class MainFrame {
 
@@ -20,7 +20,7 @@ public class MainFrame {
         // create JFrame
         JFrame frame = new JFrame();
 
-        frame.setSize(1000, 630); // FIX: was 600, the title bar cut off the bottom panel
+        frame.setSize(1000, 630); 
         frame.setTitle("DueSmart");
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
@@ -59,67 +59,28 @@ public class MainFrame {
         header.setFont(new Font("Arial", Font.BOLD, 20));
         header.setForeground(Color.WHITE);
 
-        // --CRUD BUTTONS--
+        // -- DATA TABLE SETUP (Using hardcoded values, loadTasks removed) --
+        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority"};
+        
+        String[][] data = {
+            { "Okay test", "ADET", "10/20/22", "5", "Exam", "90" },
+            { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99" },
+            { "", "", "", "", "", "" }
+        };
+
+        DefaultTableModel tableModel = new DefaultTableModel(data, columnName);
+        JTable table = new JTable(tableModel);
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setBounds(4, 154, 992, 342);
+        frame.add(scroll);
+
+        // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
         addBtn.setBounds(20, 10, 100, 100);
-        addBtn.setFont(inputFont);
-
         addBtn.addActionListener(e -> {
-            JFrame addTaskFrame = new JFrame("Add Task");
-            addTaskFrame.setSize(600, 400); // FIX: was 300, too short for 6 rows
-            addTaskFrame.setLocationRelativeTo(frame);
-            addTaskFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-            JPanel gridPanel = new JPanel(new GridLayout(0, 2, 10, 15));
-            gridPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-            JLabel taskLbl = new JLabel("Tasks:");
-            taskLbl.setFont(labelFont);
-            JTextField taskField = new JTextField();
-            taskField.setFont(inputFont);
-
-            JLabel courseLbl = new JLabel("Course:");
-            courseLbl.setFont(labelFont);
-            JTextField courseField = new JTextField();
-            courseField.setFont(inputFont);
-
-            JLabel deadlineLbl = new JLabel("Deadline (MM/DD/YY):");
-            deadlineLbl.setFont(labelFont);
-            JTextField deadlineField = new JTextField();
-            deadlineField.setFont(inputFont);
-
-            JLabel diffLbl = new JLabel("Difficulty (1-10):");
-            diffLbl.setFont(labelFont);
-            String[] difficulties = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
-            JComboBox<String> diffBox = new JComboBox<>(difficulties);
-            diffBox.setFont(inputFont);
-
-            JLabel typeLbl = new JLabel("Type:");
-            typeLbl.setFont(labelFont);
-            String[] types = { "Exam", "Assignment", "Project", "Quiz" };
-            JComboBox<String> typeBox = new JComboBox<>(types);
-            typeBox.setFont(inputFont);
-
-            JButton clearButton = new JButton("Clear");
-            clearButton.setFont(inputFont);
-            JButton compleButton = new JButton("Done");
-            compleButton.setFont(inputFont);
-
-            gridPanel.add(taskLbl);
-            gridPanel.add(taskField);
-            gridPanel.add(courseLbl);
-            gridPanel.add(courseField);
-            gridPanel.add(deadlineLbl);
-            gridPanel.add(deadlineField);
-            gridPanel.add(diffLbl);
-            gridPanel.add(diffBox);
-            gridPanel.add(typeLbl);
-            gridPanel.add(typeBox);
-            gridPanel.add(clearButton);
-            gridPanel.add(compleButton);
-
-            addTaskFrame.add(gridPanel);
-            addTaskFrame.setVisible(true);
+            TaskFormDialog.show(frame, () -> {
+                // Callback left empty for now since loading from file isn't needed yet
+            });
         });
 
         JButton editBtn = new JButton("Edit");
@@ -146,9 +107,6 @@ public class MainFrame {
         doneBtn.setBackground(Colors.YELLOW);
         doneBtn.setBorderPainted(false);
 
-        //position buttons in subPanel1
-        subPanel1.setLayout(new BorderLayout());
-
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
         left.setOpaque(false);
         left.add(addBtn);
@@ -161,40 +119,23 @@ public class MainFrame {
         right.add(courseBox);
         right.add(typeTaskBox);
 
-        subPanel1.add(left, BorderLayout.WEST);
-        subPanel1.add(right, BorderLayout.EAST);
-
-        // Data table
-        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority" };
-        String[][] data = {
-                { "Okay test", "ADET", "10/20/22", "5", "Exam", "90" },
-                { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99" },
-                { "", "", "", "", "", "" } // FIX: had 5 values for 6 columns, which throws an error while painting
-        };
-        JTable table = new JTable(data, columnName);
-        JScrollPane scroll = new JScrollPane(table);
-
-        // customize table
-        table.setFont(inputFont);
-        table.setRowHeight(28);
-        table.getTableHeader().setFont(labelFont);
-        table.setAutoCreateRowSorter(true); // sort by priority
-
-        // center numeric columns
-        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
-        center.setHorizontalAlignment(SwingConstants.CENTER);
-        table.getColumnModel().getColumn(3).setCellRenderer(center);
-        table.getColumnModel().getColumn(5).setCellRenderer(center);
-
-        scroll.setBounds(4, 124, 992, 370);
-        frame.add(scroll);
-
         // add header label to topPanel
         topPanel.add(header);
+        
         // add panels to frame
         frame.add(topPanel);
         frame.add(subPanel1);
         frame.add(subPanel2);
+        
+        // add buttons to subPanel1
+        subPanel1.add(addBtn);
+        subPanel1.add(editBtn);
+        subPanel1.add(deleteBtn);
+        subPanel1.add(doneBtn);
+        
+        // add comboBoxes to subPanel1
+        subPanel1.add(courseBox);
+        subPanel1.add(typeTaskBox);
 
         frame.setVisible(true);
     }
