@@ -165,14 +165,15 @@ public class MainFrame {
         subPanel1.add(right, BorderLayout.EAST);
 
         // Data table
-        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority" };
+        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority", "Status" };
         String[][] data = {
-                { "Okay test", "ADET", "10/20/22", "5", "Exam", "90" },
-                { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99" },
-                { "", "", "", "", "", "" } // FIX: had 5 values for 6 columns, which throws an error while painting
+                { "Okay test", "ADET", "10/20/22", "5", "Exam", "90", "Not Yet Started" },
+                { "Not So Okay Test", "DS", "10/20/22", "9", "Exam", "99", "In Progress"},
+                { "", "", "", "", "", "", "" } // FIX: had 5 values for 6 columns, which throws an error while painting
         };
         JTable table = new JTable(data, columnName);
         JScrollPane scroll = new JScrollPane(table);
+        scroll.setBounds(4, 124, 992, 370);
 
         // customize table
         table.setFont(inputFont);
@@ -186,15 +187,14 @@ public class MainFrame {
         table.getColumnModel().getColumn(3).setCellRenderer(center);
         table.getColumnModel().getColumn(5).setCellRenderer(center);
 
-        scroll.setBounds(4, 124, 992, 370);
-        frame.add(scroll);
-
         // add header label to topPanel
         topPanel.add(header);
         // add panels to frame
         frame.add(topPanel);
         frame.add(subPanel1);
         frame.add(subPanel2);
+        // add scroll
+        frame.add(scroll);
 
         frame.setVisible(true);
     }
