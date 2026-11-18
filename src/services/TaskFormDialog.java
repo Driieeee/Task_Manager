@@ -3,10 +3,11 @@ package services;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.*;
+import java.util.function.Consumer;
 
 public class TaskFormDialog {
 
-    public static void show(JFrame parentFrame, Runnable onTaskAdded) {
+    public static void show(JFrame parentFrame, Consumer<Object[]> onTaskAdded) {
         Font labelFont = new Font("Arial", Font.BOLD, 14);
         Font inputFont = new Font("Arial", Font.PLAIN, 14);
 
@@ -59,14 +60,18 @@ public class TaskFormDialog {
             String taskName = taskField.getText().trim();
             String course = courseField.getText().trim();
             String deadline = deadlineField.getText().trim();
+            String difficulty = (String) diffBox.getSelectedItem();
+            String type = (String) typeBox.getSelectedItem();
 
             if (taskName.isEmpty() || course.isEmpty() || deadline.isEmpty()) {
                 JOptionPane.showMessageDialog(addTaskFrame, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            JOptionPane.showMessageDialog(addTaskFrame, "Task Input Captured Successfully!");
-            onTaskAdded.run();
+            int level = Integer.parseInt(difficulty);
+            String priority = level >= 8 ? "High" : level >= 5 ? "Medium" : "Low";
+
+            onTaskAdded.accept(new Object[] { taskName, course, deadline, difficulty, type, priority });
             addTaskFrame.dispose();
         });
 

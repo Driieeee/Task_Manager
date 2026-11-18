@@ -77,11 +77,7 @@ public class MainFrame {
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
         addBtn.setBounds(20, 10, 100, 100);
-        addBtn.addActionListener(e -> {
-            TaskFormDialog.show(frame, () -> {
-                // Callback left empty for now since loading from file isn't needed yet
-            });
-        });
+        addBtn.addActionListener(e -> TaskFormDialog.show(frame, row -> tableModel.addRow(row)));
 
         JButton editBtn = new JButton("Edit");
         editBtn.setBounds(30, 10, 100, 100);
