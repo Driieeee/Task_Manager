@@ -74,6 +74,8 @@ public class TaskFormDialog {
             String priority = level >= 8 ? "High" : level >= 5 ? "Medium" : "Low";
 
             onTaskAdded.accept(new Object[] { taskName, course, deadline, difficulty, type, priority });
+            IdGenerator createKey = new IdGenerator();
+            
             addTaskFrame.dispose();
         });
 

@@ -1,6 +1,7 @@
 package model;
 
 public class Task {
+    private String key;
     private String name;
     private String course;
     private String deadline;
@@ -8,7 +9,7 @@ public class Task {
     private String type;
     private String priority;
 
-    public Task(String name, String course, String deadline, String difficulty, String type, String priority){
+    public Task(String key, String name, String course, String deadline, String difficulty, String type, String priority){
         this.name = name;
         this.course = course;
         this.deadline = deadline;
