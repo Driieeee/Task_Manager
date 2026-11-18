@@ -49,7 +49,7 @@ public class MainFrame {
         JComboBox<String> courseBox = new JComboBox<>(courses);
         courseBox.setFont(inputFont);
 
-        String[] typeTask = { "Exam", "Assignment", "Project", "Quiz" };
+        String[] typeTask = {"Assignment", "Exam", "Laboratory Exercise", "Long Quiz", "Project", "Quiz", "Summative", "Other" };
         JComboBox<String> typeTaskBox = new JComboBox<>(typeTask);
         typeTaskBox.setFont(inputFont);
 
@@ -77,7 +77,7 @@ public class MainFrame {
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
         addBtn.setBounds(20, 10, 100, 100);
-        addBtn.addActionListener(e -> TaskFormDialog.show(frame, row -> tableModel.addRow(row)));
+        addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, row -> tableModel.addRow(row)));
 
         JButton editBtn = new JButton("Edit");
         editBtn.setBounds(30, 10, 100, 100);
@@ -87,13 +87,7 @@ public class MainFrame {
         deleteBtn.setBounds(40, 10, 100, 100);
         deleteBtn.setFont(inputFont);
 
-        deleteBtn.addActionListener(e -> {
-            int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete this task?",
-                    "Confirm Action", JOptionPane.YES_NO_OPTION);
-            if (choice == JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(frame, "Task Deleted");
-            }
-        });
+        TaskFormDialog.showDelete(frame, table, deleteBtn);
 
         JButton doneBtn = new JButton("Mark as Done");
         doneBtn.setBounds(50, 10, 100, 100);

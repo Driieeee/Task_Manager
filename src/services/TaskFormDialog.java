@@ -3,11 +3,13 @@ package services;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.util.function.Consumer;
 
 public class TaskFormDialog {
 
-    public static void show(JFrame parentFrame, Consumer<Object[]> onTaskAdded) {
+    public static void showAdd(JFrame parentFrame, Consumer<Object[]> onTaskAdded) {
         Font labelFont = new Font("Arial", Font.BOLD, 14);
         Font inputFont = new Font("Arial", Font.PLAIN, 14);
 
@@ -54,9 +56,9 @@ public class TaskFormDialog {
             deadlineField.setText("");
         });
 
-        JButton compleButton = new JButton("Done");
-        compleButton.setFont(inputFont);
-        compleButton.addActionListener(e -> {
+        JButton completeButton = new JButton("Done");
+        completeButton.setFont(inputFont);
+        completeButton.addActionListener(e -> {
             String taskName = taskField.getText().trim();
             String course = courseField.getText().trim();
             String deadline = deadlineField.getText().trim();
@@ -86,9 +88,52 @@ public class TaskFormDialog {
         gridPanel.add(typeLbl);
         gridPanel.add(typeBox);
         gridPanel.add(clearButton);
-        gridPanel.add(compleButton);
+        gridPanel.add(completeButton);
 
         addTaskFrame.add(gridPanel);
         addTaskFrame.setVisible(true);
+    }
+
+    public static void showDelete(JFrame parentFrame, JTable taskTable, JButton deleteButton){
+        Font inputFont = new Font("Arial", Font.PLAIN, 14);
+
+        deleteButton.addActionListener(e -> {
+            
+            int selectedRow = taskTable.getSelectedRow();
+
+            if(selectedRow == -1){
+                JOptionPane.showMessageDialog(
+                    parentFrame,
+                    "Please select a task to delete.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return ;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(
+                parentFrame,
+                "Are you sure you want to delete this task?",
+                "Confirm Delete",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+            );
+
+            if(confirm == JOptionPane.YES_OPTION){
+
+                DefaultTableModel model = (DefaultTableModel) taskTable.getModel();
+
+                int modelRow = taskTable.convertRowIndexToModel(selectedRow);
+                               model.removeRow(modelRow);
+
+                JOptionPane.showMessageDialog(
+                    parentFrame, 
+                    "Task successfully deleted!",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
+    parentFrame.add(deleteButton);
     }
 }
