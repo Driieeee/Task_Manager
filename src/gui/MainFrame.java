@@ -9,6 +9,9 @@ import repository.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -94,6 +97,19 @@ public class MainFrame {
         center.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(center);
 
+        // click to deselect
+        MouseAdapter clearOnCLick = new MouseAdapter() {
+            @Override 
+            public void mousePressed(MouseEvent e){
+                table.clearSelection();
+                frame.getContentPane().requestFocusInWindow();
+            }
+        };
+
+        scroll.getViewport().addMouseListener(clearOnCLick);
+        frame.getContentPane().setFocusable(true);
+        frame.getContentPane().addMouseListener(clearOnCLick);
+
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
         addBtn.setBounds(20, 10, 100, 100);
@@ -106,6 +122,13 @@ public class MainFrame {
             if (!Repository.appendTask(task)) {
                 JOptionPane.showMessageDialog(frame, "Could not save task.",
                         "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if(task.isDueSoon()){
+                JOptionPane.showMessageDialog(
+                    frame, 
+                    "\"" + task.getTaskName() + "\" is due within 1 day!",
+                    "Deadline Warning!",
+                    JOptionPane.WARNING_MESSAGE);
             }
         }));
 
@@ -157,6 +180,11 @@ public class MainFrame {
         frame.add(subPanel1);
         frame.add(subPanel2);
         frame.add(scroll);
+
+        addBtn.setFocusable(false);
+        editBtn.setFocusable(false);
+        deleteBtn.setFocusable(false);
+        doneBtn.setFocusable(false);
 
         frame.setVisible(true);
     }

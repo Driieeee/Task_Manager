@@ -3,8 +3,7 @@ package model.enums;
 public enum TaskStatus{
 
     // enum constant
-    NOT_STARTED("Not started"),
-    IN_PROGRESS("In progress"),
+    NOT_STARTED("Not Yet Started"),
     DONE("Done");
 
     // attribute
@@ -29,8 +28,7 @@ public enum TaskStatus{
         }
 
         return switch (value.trim().toUpperCase()){
-            case "NOT_STARTED", "NOT STARTED" -> NOT_STARTED;
-            case "IN_PROGRESS", "IN PROGRESS" -> IN_PROGRESS;
+            case "NOT_YET_STARTED", "NOT YET STARTED" -> NOT_STARTED;
             case "DONE" -> DONE;
             default -> NOT_STARTED; 
         };

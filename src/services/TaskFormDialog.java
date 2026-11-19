@@ -26,15 +26,28 @@ public class TaskFormDialog {
 
     public static void showEdit(JFrame parentFrame, JTable taskTable) {
         int selectedRow = taskTable.getSelectedRow();
+
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(parentFrame, "Please select a task to edit.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                parentFrame, 
+                "Please select a task to edit.",
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         DefaultTableModel model = (DefaultTableModel) taskTable.getModel();
         int modelRow = taskTable.convertRowIndexToModel(selectedRow);
         Task current = Task.fromCsvRow(readRow(model, modelRow));
+
+        if(current.getStatus().isDone()){
+            JOptionPane.showMessageDialog(
+                parentFrame,
+                "Completed tasks cannot be edited.",
+                "Edit Restricted",
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         showForm(parentFrame, "Edit Task", current, task -> {
             Object[] updated = task.toCsvRow();
@@ -73,7 +86,7 @@ public class TaskFormDialog {
         JTextField courseField = new JTextField();
         courseField.setFont(Fonts.inputFont);
 
-        JLabel deadlineLbl = new JLabel("Deadline (MM/DD/YY):");
+        JLabel deadlineLbl = new JLabel("Deadline (MM/DD/YYYY):");
         deadlineLbl.setFont(Fonts.labelFont);
         final JFormattedTextField deadlineField = createDeadlineField();
         deadlineField.setFont(Fonts.inputFont);
@@ -92,7 +105,7 @@ public class TaskFormDialog {
             taskField.setText(initial.getTaskName());
             courseField.setText(initial.getCourse());
             deadlineField.setText(initial.getDeadline()
-                    .format(DateTimeFormatter.ofPattern("MM/dd/yy")));
+                    .format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
             diffBox.setSelectedItem(initial.getDifficulty());
             typeBox.setSelectedItem(initial.getTaskType());
         }
@@ -127,7 +140,7 @@ public class TaskFormDialog {
                 return;
             }
             if (deadline.isEmpty() || deadline.contains("_")) {
-                JOptionPane.showMessageDialog(frame, "Please enter a complete deadline in MM/DD/YY format.",
+                JOptionPane.showMessageDialog(frame, "Please enter a complete deadline in MM/DD/YYYY format.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 deadlineField.requestFocus();
                 return;
@@ -135,9 +148,9 @@ public class TaskFormDialog {
 
             LocalDate date;
             try {
-                date = LocalDate.parse(deadline, DateTimeFormatter.ofPattern("MM/dd/yy"));
+                date = LocalDate.parse(deadline, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Please enter a real date in MM/DD/YY format.",
+                JOptionPane.showMessageDialog(frame, "Please enter a real date in MM/DD/YYYY format.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 deadlineField.requestFocus();
                 return;
@@ -230,7 +243,7 @@ public class TaskFormDialog {
 
     private static JFormattedTextField createDeadlineField() {
         try {
-            MaskFormatter mask = new MaskFormatter("##/##/##");
+            MaskFormatter mask = new MaskFormatter("##/##/####");
             mask.setPlaceholderCharacter('_');
             JFormattedTextField field = new JFormattedTextField(mask);
             field.setColumns(8);

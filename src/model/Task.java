@@ -5,7 +5,7 @@ import model.enums.*;
 import java.time.format.DateTimeFormatter;
 
 public class Task {
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("MM/dd/yy");
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     private String taskName;
     private String course;
     private LocalDate deadline;
@@ -25,8 +25,23 @@ public class Task {
 
     public double computePriority(){
         long daysLeft = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), deadline); // calculate days left until deadline
-        double urgency = 1.0 / Math.max(daysLeft, 1); // calculate urgency based on days left
-        return taskType.getWeight() * difficulty.getWeight() * urgency; // return priority based on type weight and urgency
+        
+        if(daysLeft < 1){
+            daysLeft = 1;
+        }
+
+        double urgency = 1.0 / daysLeft; // fewer days left -> more urgent
+        double rawPriority = taskType.getWeight() * difficulty.getWeight() * urgency; // 
+        double priority = rawPriority * 2; // 100 instead of 50 maximum
+        priority = Math.round(priority * 100.0) / 100.0;
+
+        return priority;
+    }
+
+    public boolean isDueSoon(){
+        long daysLeft = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), deadline);
+        boolean isDone = status.toString().equalsIgnoreCase("Done");
+        return  daysLeft <= 1 && !isDone;
     }
 
     // getters
