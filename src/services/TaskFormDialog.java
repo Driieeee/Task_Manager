@@ -1,5 +1,6 @@
 package services;
 
+import gui.themes.Fonts;
 import java.awt.Font;
 import java.awt.GridLayout;
 import javax.swing.*;
@@ -13,8 +14,6 @@ import java.util.*;
 public class TaskFormDialog {
 
     public static void showAdd(JFrame parentFrame, Consumer<Object[]> onTaskAdded) {
-        Font labelFont = new Font("Arial", Font.BOLD, 14);
-        Font inputFont = new Font("Arial", Font.PLAIN, 14);
 
         JFrame addTaskFrame = new JFrame("Add Task");
         addTaskFrame.setSize(600, 400);
@@ -25,34 +24,34 @@ public class TaskFormDialog {
         gridPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JLabel taskLbl = new JLabel("Tasks:");
-        taskLbl.setFont(labelFont);
+        taskLbl.setFont(Fonts.labelFont);
         JTextField taskField = new JTextField();
-        taskField.setFont(inputFont);
+        taskField.setFont(Fonts.inputFont);
 
         JLabel courseLbl = new JLabel("Course:");
-        courseLbl.setFont(labelFont);
+        courseLbl.setFont(Fonts.labelFont);
         JTextField courseField = new JTextField();
-        courseField.setFont(inputFont);
+        courseField.setFont(Fonts.inputFont);
 
         JLabel deadlineLbl = new JLabel("Deadline (MM/DD/YY):");
-        deadlineLbl.setFont(labelFont);
+        deadlineLbl.setFont(Fonts.labelFont);
         JTextField deadlineField = new JTextField();
-        deadlineField.setFont(inputFont);
+        deadlineField.setFont(Fonts.inputFont);
 
         JLabel diffLbl = new JLabel("Difficulty (1-10):");
-        diffLbl.setFont(labelFont);
+        diffLbl.setFont(Fonts.labelFont);
         String[] difficulties = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         JComboBox<String> diffBox = new JComboBox<>(difficulties);
-        diffBox.setFont(inputFont);
+        diffBox.setFont(Fonts.inputFont);
 
         JLabel typeLbl = new JLabel("Type:");
-        typeLbl.setFont(labelFont);
+        typeLbl.setFont(Fonts.labelFont);
         String[] types = { "Exam", "Assignment", "Project", "Quiz" };
         JComboBox<String> typeBox = new JComboBox<>(types);
-        typeBox.setFont(inputFont);
+        typeBox.setFont(Fonts.inputFont);
 
         JButton clearButton = new JButton("Clear");
-        clearButton.setFont(inputFont);
+        clearButton.setFont(Fonts.inputFont);
         clearButton.addActionListener(e -> {
             taskField.setText("");
             courseField.setText("");
@@ -60,7 +59,7 @@ public class TaskFormDialog {
         });
 
         JButton completeButton = new JButton("Done");
-        completeButton.setFont(inputFont);
+        completeButton.setFont(Fonts.inputFont);
         completeButton.addActionListener(e -> {
             String taskName = taskField.getText().trim();
             String course = courseField.getText().trim();

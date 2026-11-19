@@ -3,22 +3,18 @@ package gui;
 import services.*;
 
 import gui.themes.Colors;
+import gui.themes.Fonts;
 import repository.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import javax.swing.*;
 import javax.swing.table.*;
 
 public class MainFrame {
 
     public static void main(String[] args) {
-
-        // fonts
-        Font labelFont = new Font("Arial", Font.BOLD, 14);
-        Font inputFont = new Font("Arial", Font.PLAIN, 14);
 
         // create JFrame
         JFrame frame = new JFrame();
@@ -50,16 +46,16 @@ public class MainFrame {
         // create comboBoxes
         String[] courses = { "Discrete Structures", "Linear Algebra" };
         JComboBox<String> courseBox = new JComboBox<>(courses);
-        courseBox.setFont(inputFont);
+        courseBox.setFont(Fonts.inputFont);
 
         String[] typeTask = {"Assignment", "Exam", "Laboratory Exercise", "Long Quiz", "Project", "Quiz", "Summative", "Other" };
         JComboBox<String> typeTaskBox = new JComboBox<>(typeTask);
-        typeTaskBox.setFont(inputFont);
+        typeTaskBox.setFont(Fonts.inputFont);
 
         // create label for panel
         JLabel header = new JLabel("Student Task Manager");
         header.setBounds(50, 0, 1000, 75);
-        header.setFont(new Font("Arial", Font.BOLD, 20));
+        header.setFont(Fonts.headerFont);
         header.setForeground(Color.WHITE);
 
         // -- DATA TABLE SETUP --
@@ -81,9 +77,9 @@ public class MainFrame {
         scroll.setBounds(4, 124, 992, 370);
 
         // customize table
-        table.setFont(inputFont);
+        table.setFont(Fonts.inputFont);
         table.setRowHeight(28);
-        table.getTableHeader().setFont(labelFont);
+        table.getTableHeader().setFont(Fonts.labelFont);
         table.setAutoCreateRowSorter(true); // sort by priority
 
         // center numeric columns
@@ -95,9 +91,11 @@ public class MainFrame {
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
         addBtn.setBounds(20, 10, 100, 100);
+        addBtn.setFont(Fonts.inputFont);
+
         JButton editBtn = new JButton("Edit");
         editBtn.setBounds(30, 10, 100, 100);
-        editBtn.setFont(inputFont);
+        editBtn.setFont(Fonts.inputFont);
         // When a task is added: show it in the table AND save it to the CSV.
         // appendTask() returns false if the save failed; no exception reaches this code.
         addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, row -> {
@@ -110,13 +108,13 @@ public class MainFrame {
 
         JButton deleteBtn = new JButton("Delete");
         deleteBtn.setBounds(40, 10, 100, 100);
-        deleteBtn.setFont(inputFont);
+        deleteBtn.setFont(Fonts.inputFont);
 
         TaskFormDialog.showDelete(frame, table, deleteBtn);
 
         JButton doneBtn = new JButton("Mark as Done");
         doneBtn.setBounds(50, 10, 100, 100);
-        doneBtn.setFont(inputFont);
+        doneBtn.setFont(Fonts.inputFont);
         doneBtn.setContentAreaFilled(false);
         doneBtn.setOpaque(true);
         doneBtn.setBackground(Colors.YELLOW);
