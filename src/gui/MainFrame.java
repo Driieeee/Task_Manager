@@ -123,12 +123,16 @@ public class MainFrame {
                 JOptionPane.showMessageDialog(frame, "Could not save task.",
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
-            if(task.isDueSoon()){
-                JOptionPane.showMessageDialog(
-                    frame, 
-                    "\"" + task.getTaskName() + "\" is due within 1 day!",
-                    "Deadline Warning!",
-                    JOptionPane.WARNING_MESSAGE);
+            if (task.isOverDue()) {
+                JOptionPane.showMessageDialog(frame,
+                        "\"" + task.getTaskName() + "\" is OVERDUE! The deadline has already passed.",
+                        "Overdue Task",
+                        JOptionPane.ERROR_MESSAGE);
+            } else if (task.isDueSoon()) {
+                JOptionPane.showMessageDialog(frame,
+                        "\"" + task.getTaskName() + "\" is due within 1 day!",
+                        "Deadline Warning",
+                        JOptionPane.WARNING_MESSAGE);
             }
         }));
 

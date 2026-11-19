@@ -41,7 +41,13 @@ public class Task {
     public boolean isDueSoon(){
         long daysLeft = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), deadline);
         boolean isDone = status.toString().equalsIgnoreCase("Done");
-        return  daysLeft <= 1 && !isDone;
+        return  daysLeft >= 0  && daysLeft <= 1 && !isDone;
+    }
+
+    public boolean isOverDue(){
+        long daysLeft = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), deadline);
+        boolean isDone = status.toString().equalsIgnoreCase("Done");
+        return  daysLeft < 0 && !isDone;
     }
 
     // getters
