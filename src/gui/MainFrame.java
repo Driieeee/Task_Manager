@@ -2,6 +2,8 @@ package gui;
 
 import services.*;
 
+import exception.DuplicateTaskException;
+import exception.TaskFileException;
 import gui.themes.Colors;
 import gui.themes.Fonts;
 import repository.*;
@@ -66,13 +68,25 @@ public class MainFrame {
         // -- DATA TABLE SETUP --
         // These are the column headers. The initial row count is 0 because the rows
         // come from the CSV file instead of being typed in here.
-        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type", "Priority", "Status"};
+        String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type",
+                                "Priority", "Status", "ID", "Hours"};
         DefaultTableModel tableModel = new DefaultTableModel(columnName, 0);
 
-        // Load saved tasks when the app opens. loadTasks() returns an empty list if
-        // the CSV does not exist yet, so nothing special is needed on first launch.
-        for (Task task : Repository.loadTasks()) {
-            tableModel.addRow(task.toCsvRow());
+        // Load saved tasks. Warnings (missing file, skipped lines) are shown to the
+        // user; a read failure is reported here so the app can still open empty.
+        try {
+            repository.TaskLoadResult loaded = TaskService.loadTasks();
+            for (Task task : loaded.getTasks()) {
+                tableModel.addRow(task.toCsvRow());
+            }
+            if (loaded.hasWarnings()) {
+                JOptionPane.showMessageDialog(frame, String.join("\n", loaded.getWarnings()),
+                        "Data Notice", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (TaskFileException e) {
+            JOptionPane.showMessageDialog(frame,
+                    "Could not load saved tasks (" + e.getMessage() + "). Starting empty.",
+                    "Data Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // The JTable is the part that actually displays the model. Without this line
@@ -97,6 +111,11 @@ public class MainFrame {
         center.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(center);
 
+        // Identity and hours travel with each row but are not shown in the table.
+        // The model keeps them so edit/delete operate on the same stored task.
+        table.getColumnModel().removeColumn(table.getColumnModel().getColumn(8)); // Hours
+        table.getColumnModel().removeColumn(table.getColumnModel().getColumn(7)); // ID
+
         // click to deselect
         MouseAdapter clearOnCLick = new MouseAdapter() {
             @Override 
@@ -115,21 +134,28 @@ public class MainFrame {
         addBtn.setBounds(20, 10, 100, 100);
         addBtn.setFont(Fonts.inputFont);
 
-        // When a task is added: show it in the table AND save it to the CSV.
-        // appendTask() returns false if the save failed; no exception reaches this code.
+        // Save first, then show the row, so the table and the file never disagree.
+        // Checked exceptions from the service are handled here at the GUI boundary.
         addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, task -> {
-            tableModel.addRow(task.toCsvRow());
-            if (!Repository.appendTask(task)) {
-                JOptionPane.showMessageDialog(frame, "Could not save task.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
+            try {
+                TaskService.addTask(task);
+                tableModel.addRow(task.toCsvRow());
+                if (task.isDueSoon()) {
+                    JOptionPane.showMessageDialog(
+                        frame,
+                        "\"" + task.getTaskName() + "\" is due within 1 day!",
+                        "Deadline Warning!",
+                        JOptionPane.WARNING_MESSAGE);
+                }
+                return true;
+            } catch (DuplicateTaskException ex) {
+                JOptionPane.showMessageDialog(frame, ex.getMessage(),
+                        "Duplicate Task", JOptionPane.WARNING_MESSAGE);
+            } catch (TaskFileException ex) {
+                JOptionPane.showMessageDialog(frame, ex.getMessage(),
+                        "Save Error", JOptionPane.ERROR_MESSAGE);
             }
-            if(task.isDueSoon()){
-                JOptionPane.showMessageDialog(
-                    frame, 
-                    "\"" + task.getTaskName() + "\" is due within 1 day!",
-                    "Deadline Warning!",
-                    JOptionPane.WARNING_MESSAGE);
-            }
+            return false;
         }));
 
         JButton editBtn = new JButton("Edit");

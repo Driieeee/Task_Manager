@@ -1,5 +1,7 @@
 package model.enums;
 
+import exception.TaskValidationException;
+
 public enum TaskStatus{
 
     // enum constant
@@ -27,10 +29,23 @@ public enum TaskStatus{
             return NOT_STARTED;
         }
 
-        return switch (value.trim().toUpperCase()){
-            case "NOT_YET_STARTED", "NOT YET STARTED" -> NOT_STARTED;
+        return switch (value.trim().toUpperCase().replace('_', ' ')){
+            case "NOT STARTED", "NOT YET STARTED" -> NOT_STARTED;
             case "DONE" -> DONE;
             default -> NOT_STARTED; 
+        };
+    }
+
+    /** Strict variant: an unknown status word is a validation failure. */
+    public static TaskStatus fromTextStrict(String value){
+        if(value == null || value.isBlank()){
+            throw new TaskValidationException("Status is required.");
+        }
+
+        return switch (value.trim().toUpperCase().replace('_', ' ')){
+            case "NOT STARTED", "NOT YET STARTED" -> NOT_STARTED;
+            case "DONE" -> DONE;
+            default -> throw new TaskValidationException("Unknown status: " + value);
         };
     }
 

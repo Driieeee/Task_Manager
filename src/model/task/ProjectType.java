@@ -14,6 +14,6 @@ public final class ProjectType extends TaskType{
 
     @Override 
     public String getCode(){
-        return "Project";
+        return "PROJECT";
     }
 }

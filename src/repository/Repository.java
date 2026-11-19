@@ -10,45 +10,69 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.TaskFileException;
+import exception.TaskValidationException;
 import model.Task;
 
+/**
+ * File layer for tasks. It owns CSV parsing/writing and reports unusable data
+ * instead of silently hiding it. Business rules live in the service layer.
+ */
 public class Repository {
 
     private static final String FILE_NAME = "src/data/tasks.csv";
-    private static final String HEADER = "Task,Course,Deadline,Difficulty,Type,Priority,Status";
+    private static final String HEADER =
+            "Task,Course,Deadline,Difficulty,Type,Priority,Status,ID,Hours";
+    private static final String LEGACY_HEADER =
+            "Task,Course,Deadline,Difficulty,Type,Priority,Status";
 
-    public static List<Task> loadTasks() {
+    /**
+     * Loads every readable row. A missing file is an empty result with a
+     * warning; a corrupt row is skipped and counted; an unreadable file raises
+     * a checked exception for the caller to report.
+     */
+    public static TaskLoadResult loadTasks() throws TaskFileException {
         List<Task> tasks = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
         Path path = Path.of(FILE_NAME);
 
         if (!Files.exists(path)) {
-            return tasks;
+            return TaskLoadResult.empty("Data file not found (" + FILE_NAME
+                    + "); a new one will be created on first save.");
         }
 
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line;
+            int lineNumber = 0;
             boolean firstLine = true;
 
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 if (line.isBlank()) {
                     continue;
                 }
                 if (firstLine) {
                     firstLine = false;
-                    if (line.equalsIgnoreCase(HEADER)) {
+                    if (line.equalsIgnoreCase(HEADER)
+                            || line.equalsIgnoreCase(LEGACY_HEADER)) {
                         continue;
                     }
                 }
-                tasks.add(Task.fromCsvRow(parseLine(line)));
+
+                try {
+                    tasks.add(Task.fromCsvRow(parseLine(line)));
+                } catch (TaskValidationException e) {
+                    warnings.add("Skipped line " + lineNumber + ": " + e.getMessage());
+                }
             }
-        } catch (IOException | RuntimeException e) {
-            e.printStackTrace();
-            tasks.clear();
+        } catch (IOException e) {
+            throw new TaskFileException("Could not read " + FILE_NAME + ".", e);
         }
-        return tasks;
+
+        return new TaskLoadResult(tasks, warnings);
     }
 
-    public static boolean appendTask(Task task) {
+    public static void appendTask(Task task) throws TaskFileException {
         Path path = Path.of(FILE_NAME);
 
         try {
@@ -71,10 +95,36 @@ public class Repository {
                 writer.write(toCsvLine(task.toCsvRow()));
                 writer.newLine();
             }
-            return true;
-        } catch (IOException | RuntimeException e) {
-            e.printStackTrace();
-            return false;
+        } catch (IOException e) {
+            throw new TaskFileException("Could not save task to " + FILE_NAME + ".", e);
+        }
+    }
+
+    public static void saveAll(List<Task> tasks) throws TaskFileException {
+        Path path = Path.of(FILE_NAME);
+
+        try {
+            if (path.getParent() != null) {
+                Files.createDirectories(path.getParent());
+            }
+
+            try (BufferedWriter writer = Files.newBufferedWriter(
+                    path,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.WRITE)) {
+
+                writer.write(HEADER);
+                writer.newLine();
+
+                for (Task task : tasks) {
+                    writer.write(toCsvLine(task.toCsvRow()));
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            throw new TaskFileException("Could not write tasks to " + FILE_NAME + ".", e);
         }
     }
 
@@ -127,34 +177,5 @@ public class Repository {
 
         values.add(current.toString());
         return values.toArray(new String[0]);
-    }
-
-    public static boolean saveAll(List<Task> tasks) {
-        Path path = Path.of(FILE_NAME);
-
-        try {
-            if (path.getParent() != null) {
-                Files.createDirectories(path.getParent());
-            }
-
-            try (BufferedWriter writer = Files.newBufferedWriter(
-                    path,
-                    StandardCharsets.UTF_8,
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING,
-                    StandardOpenOption.WRITE)) {
-                writer.write(HEADER);
-                writer.newLine();
-
-                for (Task task : tasks) {
-                    writer.write(toCsvLine(task.toCsvRow()));
-                    writer.newLine();
-                }
-            }
-            return true;
-        } catch (IOException | RuntimeException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }

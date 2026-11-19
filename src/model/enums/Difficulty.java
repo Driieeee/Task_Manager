@@ -1,5 +1,7 @@
 package model.enums;
 
+import exception.TaskValidationException;
+
 public enum Difficulty {
     // 1 - 2 : easy
     // 3     : medium
@@ -56,6 +58,22 @@ public enum Difficulty {
             case "LEVEL_4", "4" -> LEVEL_4;
             case "LEVEL_5", "5" -> LEVEL_5;
             default -> DEFAULT;
+        };
+    }
+
+    /** Strict variant used when loading or validating stored data. */
+    public static Difficulty fromTextStrict(String text){
+        if(text == null || text.isBlank()){
+            throw new TaskValidationException("Difficulty is required.");
+        }
+
+        return switch(text.trim().toUpperCase()){
+            case "LEVEL_1", "1" -> LEVEL_1;
+            case "LEVEL_2", "2" -> LEVEL_2;
+            case "LEVEL_3", "3" -> LEVEL_3;
+            case "LEVEL_4", "4" -> LEVEL_4;
+            case "LEVEL_5", "5" -> LEVEL_5;
+            default -> throw new TaskValidationException("Unknown difficulty: " + text);
         };
     }
 

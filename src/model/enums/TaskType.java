@@ -58,18 +58,42 @@ public abstract class TaskType implements Reportable{
             return OTHER_TASK;
         }
 
-        return switch (value.trim().toUpperCase()){
+        return switch (normalize(value)){
             case "EXAM" -> EXAM;
             case "LONG QUIZ" -> LONG_QUIZ;
             case "QUIZ" -> QUIZ;
             case "SUMMATIVE EXAM" -> SUMMATIVE_EXAM;
             case "ASSIGNMENT" -> ASSIGNMENT;
             case "LABORATORY EXERCISE" -> LABORATORY_EXERCISE;
-            case "OTHER TASK" -> OTHER_TASK;
+            case "OTHER TASK", "OTHER TASK TYPE" -> OTHER_TASK;
             case "PROJECT" -> PROJECT;
             case "RECITATION" -> RECITATION;
             default -> OTHER_TASK;
         };
+    }
+
+    /** Strict variant: an unknown type is a validation failure, not a default. */
+    public static TaskType fromTextStrict(String value){
+        if(value == null || value.isBlank()){
+            throw new TaskValidationException("Task type is required.");
+        }
+
+        return switch (normalize(value)){
+            case "EXAM" -> EXAM;
+            case "LONG QUIZ" -> LONG_QUIZ;
+            case "QUIZ" -> QUIZ;
+            case "SUMMATIVE EXAM" -> SUMMATIVE_EXAM;
+            case "ASSIGNMENT" -> ASSIGNMENT;
+            case "LABORATORY EXERCISE" -> LABORATORY_EXERCISE;
+            case "OTHER TASK", "OTHER TASK TYPE" -> OTHER_TASK;
+            case "PROJECT" -> PROJECT;
+            case "RECITATION" -> RECITATION;
+            default -> throw new TaskValidationException("Unknown task type: " + value);
+        };
+    }
+
+    private static String normalize(String value){
+        return value.trim().toUpperCase().replace('_', ' ');
     }
 
     @Override
