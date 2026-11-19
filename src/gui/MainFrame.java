@@ -97,9 +97,6 @@ public class MainFrame {
         addBtn.setBounds(20, 10, 100, 100);
         addBtn.setFont(Fonts.inputFont);
 
-        JButton editBtn = new JButton("Edit");
-        editBtn.setBounds(30, 10, 100, 100);
-        editBtn.setFont(Fonts.inputFont);
         // When a task is added: show it in the table AND save it to the CSV.
         // appendTask() returns false if the save failed; no exception reaches this code.
         addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, row -> {
@@ -109,6 +106,12 @@ public class MainFrame {
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
         }));
+
+        JButton editBtn = new JButton("Edit");
+        editBtn.setBounds(30, 10, 100, 100);
+        editBtn.setFont(Fonts.inputFont);
+
+        editBtn.addActionListener(e -> TaskFormDialog.showEdit(frame, table));
 
         JButton deleteBtn = new JButton("Delete");
         deleteBtn.setBounds(40, 10, 100, 100);

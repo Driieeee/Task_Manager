@@ -56,6 +56,7 @@ public class StudentRepository {
                 tasks.add(parseLine(line)); // convert "a,b,c" into String[] { "a", "b", "c" }
             }
         } catch (IOException | RuntimeException e) {
+            e.printStackTrace();
             // If reading fails, keep whatever rows were read and carry on with an empty table.
             tasks.clear();
         }
@@ -93,6 +94,7 @@ public class StudentRepository {
             }
             return true;
         } catch (IOException | RuntimeException e) {
+            e.printStackTrace();
             // The GUI can show a message when this returns false.
             return false;
         }
@@ -173,6 +175,7 @@ public class StudentRepository {
             return true;
         }
         catch (IOException | RuntimeException e) {
+            e.printStackTrace();
             return false;
         }
     }
