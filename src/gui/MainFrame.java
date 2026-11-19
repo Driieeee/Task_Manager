@@ -12,6 +12,9 @@ import java.awt.FlowLayout;
 import javax.swing.*;
 import javax.swing.table.*;
 
+import model.Task;
+import model.enums.TaskType;
+
 public class MainFrame {
 
     public static void main(String[] args) {
@@ -48,8 +51,7 @@ public class MainFrame {
         JComboBox<String> courseBox = new JComboBox<>(courses);
         courseBox.setFont(Fonts.inputFont);
 
-        String[] typeTask = {"Assignment", "Exam", "Laboratory Exercise", "Long Quiz", "Project", "Quiz", "Summative", "Other" };
-        JComboBox<String> typeTaskBox = new JComboBox<>(typeTask);
+        JComboBox<TaskType> typeTaskBox = new JComboBox<>(TaskType.values());
         typeTaskBox.setFont(Fonts.inputFont);
 
         // create label for panel
@@ -66,8 +68,8 @@ public class MainFrame {
 
         // Load saved tasks when the app opens. loadTasks() returns an empty list if
         // the CSV does not exist yet, so nothing special is needed on first launch.
-        for (String[] row : StudentRepository.loadTasks()) {
-            tableModel.addRow(row);
+        for (Task task : Repository.loadTasks()) {
+            tableModel.addRow(task.toCsvRow());
         }
 
         // The JTable is the part that actually displays the model. Without this line
@@ -99,9 +101,9 @@ public class MainFrame {
 
         // When a task is added: show it in the table AND save it to the CSV.
         // appendTask() returns false if the save failed; no exception reaches this code.
-        addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, row -> {
-            tableModel.addRow(row);
-            if (!StudentRepository.appendTask(row)) {
+        addBtn.addActionListener(e -> TaskFormDialog.showAdd(frame, task -> {
+            tableModel.addRow(task.toCsvRow());
+            if (!Repository.appendTask(task)) {
                 JOptionPane.showMessageDialog(frame, "Could not save task.",
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
