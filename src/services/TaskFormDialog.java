@@ -3,6 +3,7 @@ package services;
 import gui.themes.Fonts;
 import java.awt.GridLayout;
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import javax.swing.table.DefaultTableModel;
 
 import repository.StudentRepository;
@@ -13,12 +14,12 @@ import java.util.*;
 public class TaskFormDialog {
 
     public static void showAdd(JFrame parentFrame, Consumer<Object[]> onTaskAdded) {
-    showForm(parentFrame, "Add Task", null, values -> {
-        Object[] row = Arrays.copyOf(values, 7);
-        row[6] = "Not Yet Started";
-        onTaskAdded.accept(row);
-    });
-}
+        showForm(parentFrame, "Add Task", null, values -> {
+            Object[] row = Arrays.copyOf(values, 7);
+            row[6] = "Not Yet Started";
+            onTaskAdded.accept(row);
+        });
+    }
 
 public static void showEdit(JFrame parentFrame, JTable taskTable) {
     int selectedRow = taskTable.getSelectedRow();
@@ -74,7 +75,7 @@ private static void showForm(JFrame parentFrame, String title, Object[] initial,
 
     JLabel deadlineLbl = new JLabel("Deadline (MM/DD/YY):");
     deadlineLbl.setFont(Fonts.labelFont);
-    JTextField deadlineField = new JTextField();
+    final JFormattedTextField deadlineField = createDeadlineField();
     deadlineField.setFont(Fonts.inputFont);
 
     JLabel diffLbl = new JLabel("Difficulty (1-10):");
@@ -115,9 +116,22 @@ private static void showForm(JFrame parentFrame, String title, Object[] initial,
         String difficulty = (String) diffBox.getSelectedItem();
         String type = (String) typeBox.getSelectedItem();
 
-        if (taskName.isEmpty() || course.isEmpty() || deadline.isEmpty()) {
-            JOptionPane.showMessageDialog(frame, "Please fill in all fields.",
+        if (taskName.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Please enter a task name.",
                     "Error", JOptionPane.ERROR_MESSAGE);
+            taskField.requestFocus();
+            return;
+        }
+        if (course.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Please enter a course.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            courseField.requestFocus();
+            return;
+        }
+        if (deadline.isEmpty() || deadline.contains("_")) {
+            JOptionPane.showMessageDialog(frame, "Please enter a complete deadline in MM/DD/YY format.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            deadlineField.requestFocus();
             return;
         }
 
@@ -227,6 +241,18 @@ private static void showForm(JFrame parentFrame, String title, Object[] initial,
                 JOptionPane.INFORMATION_MESSAGE
             );
         });
+    }
+
+    private static JFormattedTextField createDeadlineField() {
+        try {
+            MaskFormatter mask = new MaskFormatter("##/##/##");
+            mask.setPlaceholderCharacter('_');
+            JFormattedTextField field = new JFormattedTextField(mask);
+            field.setColumns(8);
+            return field;
+        } catch (java.text.ParseException e) {
+            return new JFormattedTextField(); // fallback, never expected
+        }
     }
 
     private static List<Object[]> readAllRows(DefaultTableModel model) {
