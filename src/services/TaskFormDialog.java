@@ -176,7 +176,9 @@ public class TaskFormDialog {
                 return;
             }
 
+            // Saves done when mark done button is pressed!!!!!
             model.setValueAt("Done", modelRow, 6);
+            StudentRepository.saveAll(readAllRows(model));
 
             JOptionPane.showMessageDialog(
                 parentFrame,
