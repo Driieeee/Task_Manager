@@ -74,7 +74,7 @@ public class TaskFormDialog {
 
             int level = Integer.parseInt(difficulty);
             String priority = level >= 8 ? "High" : level >= 5 ? "Medium" : "Low";
-            String status = "Pending";
+            String status = "Not Yet Started";
 
             onTaskAdded.accept(new Object[] { taskName, course, deadline, difficulty, type, priority, status });
             IdGenerator createKey = new IdGenerator();
