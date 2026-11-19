@@ -1,7 +1,6 @@
 package model;
 
 public class Task {
-    private String key;
     private String name;
     private String course;
     private String deadline;

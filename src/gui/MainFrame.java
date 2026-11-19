@@ -72,7 +72,12 @@ public class MainFrame {
 
         // The JTable is the part that actually displays the model. Without this line
         // the scroll pane would be empty and no tasks would be visible.
-        JTable table = new JTable(tableModel);
+        JTable table = new JTable(tableModel) {
+            @Override 
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBounds(4, 124, 992, 370);
 
@@ -86,7 +91,6 @@ public class MainFrame {
         DefaultTableCellRenderer center = new DefaultTableCellRenderer();
         center.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(center);
-        table.getColumnModel().getColumn(5).setCellRenderer(center);
 
         // -- CRUD BUTTONS --
         JButton addBtn = new JButton("Add Task");
