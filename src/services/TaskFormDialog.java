@@ -71,7 +71,7 @@ public class TaskFormDialog {
             // new identity.
             Task edited = new Task(current.getId(), task.getTaskName(), task.getCourse(),
                     task.getDeadline(), task.getDifficulty(), task.getTaskType(),
-                    task.getStatus(), task.getEstimatedHours());
+                    task.getStatus());
             tasks.set(modelRow, edited);
 
             try {
@@ -97,7 +97,7 @@ public class TaskFormDialog {
         boolean isEdit = initial != null;
 
         JFrame frame = new JFrame(title);
-        frame.setSize(600, 440);
+        frame.setSize(600, 400);
         frame.setLocationRelativeTo(parentFrame);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -129,20 +129,12 @@ public class TaskFormDialog {
         JComboBox<TaskType> typeBox = new JComboBox<>(TaskType.values());
         typeBox.setFont(Fonts.inputFont);
 
-        JLabel hoursLbl = new JLabel("Estimated Hours (0.5-12):");
-        hoursLbl.setFont(Fonts.labelFont);
-        JTextField hoursField = new JTextField();
-        hoursField.setFont(Fonts.inputFont);
-
         if (isEdit) {
             taskField.setText(initial.getTaskName());
             courseField.setText(initial.getCourse());
             deadlineField.setText(Task.formatDate(initial.getDeadline()));
             diffBox.setSelectedItem(initial.getDifficulty());
             typeBox.setSelectedItem(initial.getTaskType());
-            hoursField.setText(String.valueOf(initial.getEstimatedHours()));
-        } else {
-            hoursField.setText(String.valueOf(Task.DEFAULT_HOURS));
         }
 
         JButton clearButton = new JButton("Clear");
@@ -153,7 +145,6 @@ public class TaskFormDialog {
             deadlineField.setText("");
             diffBox.setSelectedItem(Difficulty.DEFAULT);
             typeBox.setSelectedItem(TaskType.defaultType());
-            hoursField.setText(String.valueOf(Task.DEFAULT_HOURS));
         });
 
         JButton completeButton = new JButton(isEdit ? "Save" : "Done");
@@ -187,18 +178,11 @@ public class TaskFormDialog {
 
                 LocalDate date = Task.parseDate(deadline);
 
-                double hours;
-                try {
-                    hours = Double.parseDouble(hoursField.getText().trim());
-                } catch (NumberFormatException ex) {
-                    throw new TaskValidationException("Estimated hours must be a number.");
-                }
-
                 Difficulty difficulty = (Difficulty) diffBox.getSelectedItem();
                 TaskType type = (TaskType) typeBox.getSelectedItem();
                 TaskStatus status = isEdit ? initial.getStatus() : TaskStatus.NOT_STARTED;
 
-                Task task = new Task(taskName, course, date, difficulty, type, status, hours);
+                Task task = new Task(taskName, course, date, difficulty, type, status);
                 if (Boolean.TRUE.equals(onSave.apply(task))) {
                     frame.dispose();
                 }
@@ -221,8 +205,6 @@ public class TaskFormDialog {
         gridPanel.add(diffBox);
         gridPanel.add(typeLbl);
         gridPanel.add(typeBox);
-        gridPanel.add(hoursLbl);
-        gridPanel.add(hoursField);
         gridPanel.add(clearButton);
         gridPanel.add(completeButton);
 

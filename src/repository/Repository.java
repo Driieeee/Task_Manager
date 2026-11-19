@@ -22,7 +22,7 @@ public class Repository {
 
     private static final String FILE_NAME = "src/data/tasks.csv";
     private static final String HEADER =
-            "Task,Course,Deadline,Difficulty,Type,Priority,Status,ID,Hours";
+            "Task,Course,Deadline,Difficulty,Type,Priority,Status,ID";
     private static final String LEGACY_HEADER =
             "Task,Course,Deadline,Difficulty,Type,Priority,Status";
 

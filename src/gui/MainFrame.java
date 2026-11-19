@@ -69,7 +69,7 @@ public class MainFrame {
         // These are the column headers. The initial row count is 0 because the rows
         // come from the CSV file instead of being typed in here.
         String[] columnName = { "Task", "Course", "Deadline", "Difficulty", "Type",
-                                "Priority", "Status", "ID", "Hours"};
+                                "Priority", "Status", "ID"};
         DefaultTableModel tableModel = new DefaultTableModel(columnName, 0);
 
         // Load saved tasks. Warnings (missing file, skipped lines) are shown to the
@@ -111,9 +111,8 @@ public class MainFrame {
         center.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(center);
 
-        // Identity and hours travel with each row but are not shown in the table.
-        // The model keeps them so edit/delete operate on the same stored task.
-        table.getColumnModel().removeColumn(table.getColumnModel().getColumn(8)); // Hours
+        // Identity travels with each row but is not shown in the table.
+        // The model keeps it so edit/delete operate on the same stored task.
         table.getColumnModel().removeColumn(table.getColumnModel().getColumn(7)); // ID
 
         // click to deselect
@@ -140,11 +139,7 @@ public class MainFrame {
             try {
                 TaskService.addTask(task);
                 tableModel.addRow(task.toCsvRow());
-                if (task.isOverDue()) {
-                    JOptionPane.showMessageDialog(frame,
-                            "\"" + task.getTaskName() + "\" is OVERDUE! The deadline has already passed.",
-                            "Overdue Task", JOptionPane.ERROR_MESSAGE);
-                } else if (task.isDueSoon()) {
+                if (task.isDueSoon()) {
                     JOptionPane.showMessageDialog(frame,
                             "\"" + task.getTaskName() + "\" is due within 1 day!",
                             "Deadline Warning", JOptionPane.WARNING_MESSAGE);

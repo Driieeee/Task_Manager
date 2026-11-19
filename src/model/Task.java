@@ -22,9 +22,6 @@ public final class Task {
     private static final DateTimeFormatter DATE_FORMAT =
             DateTimeFormatter.ofPattern("MM/dd/uuuu").withResolverStyle(ResolverStyle.STRICT);
     private static final int MAX_TEXT_LENGTH = 60;
-    private static final double MIN_HOURS = 0.5;
-    private static final double MAX_HOURS = 12.0;
-    public static final double DEFAULT_HOURS = 1.0;
 
     private final String id;
     private String taskName;
@@ -33,20 +30,17 @@ public final class Task {
     private Difficulty difficulty;
     private TaskType taskType;
     private TaskStatus status;
-    private double estimatedHours;
 
     /** Creates a new task with a generated identifier. */
     public Task(String taskName, String course, LocalDate deadline,
-                Difficulty difficulty, TaskType taskType, TaskStatus status,
-                double estimatedHours) {
+                Difficulty difficulty, TaskType taskType, TaskStatus status) {
         this(IdGenerator.next(), taskName, course, deadline,
-                difficulty, taskType, status, estimatedHours);
+                difficulty, taskType, status);
     }
 
     /** Creates a task with a known identifier, used when reloading saved data. */
     public Task(String id, String taskName, String course, LocalDate deadline,
-                Difficulty difficulty, TaskType taskType, TaskStatus status,
-                double estimatedHours) {
+                Difficulty difficulty, TaskType taskType, TaskStatus status) {
         if (id == null || id.isBlank()) {
             throw new TaskValidationException("Task identifier cannot be empty.");
         }
@@ -57,7 +51,6 @@ public final class Task {
         setDifficulty(difficulty);
         setTaskType(taskType);
         setStatus(status);
-        setEstimatedHours(estimatedHours);
     }
 
     /** Priority is recalculated on demand from the current type and difficulty. */
@@ -109,10 +102,6 @@ public final class Task {
         return status;
     }
 
-    public double getEstimatedHours() {
-        return estimatedHours;
-    }
-
     public void setTaskName(String taskName) {
         String value = requireText(taskName, "Task name");
         if (value.length() > MAX_TEXT_LENGTH) {
@@ -159,15 +148,6 @@ public final class Task {
         this.status = status;
     }
 
-    public void setEstimatedHours(double estimatedHours) {
-        if (Double.isNaN(estimatedHours) || Double.isInfinite(estimatedHours)
-                || estimatedHours < MIN_HOURS || estimatedHours > MAX_HOURS) {
-            throw new TaskValidationException(
-                    "Estimated hours must be between " + MIN_HOURS + " and " + MAX_HOURS + ".");
-        }
-        this.estimatedHours = estimatedHours;
-    }
-
     /** One place formats a date for both the table and the CSV file. */
     public static String formatDate(LocalDate date) {
         if (date == null) {
@@ -195,9 +175,9 @@ public final class Task {
     }
 
     /**
-     * Row layout used by both the table model and the CSV file:
-     * seven display columns followed by the identifier and estimated hours.
-     * Older seven-column rows are accepted and given sensible defaults.
+     * Row layout used by both the table model and the CSV file: seven display
+     * columns followed by the identifier. Older seven-column rows are accepted
+     * and given a generated identifier.
      */
     public Object[] toCsvRow() {
         return new Object[] {
@@ -208,8 +188,7 @@ public final class Task {
                 taskType.getLabel(),
                 String.valueOf(computePriority()),
                 status.toString(),
-                id,
-                String.valueOf(estimatedHours)
+                id
         };
     }
 
@@ -221,23 +200,13 @@ public final class Task {
 
         String id = row.length > 7 && !row[7].isBlank() ? row[7].trim() : IdGenerator.next();
 
-        double hours = DEFAULT_HOURS;
-        if (row.length > 8 && !row[8].isBlank()) {
-            try {
-                hours = Double.parseDouble(row[8].trim());
-            } catch (NumberFormatException e) {
-                throw new TaskValidationException("Invalid estimated hours: " + row[8], e);
-            }
-        }
-
         return new Task(id,
                 row[0],
                 row[1],
                 parseDate(row[2]),
                 Difficulty.fromTextStrict(row[3]),
                 TaskType.fromTextStrict(row[4]),
-                TaskStatus.fromTextStrict(row[6]),
-                hours);
+                TaskStatus.fromTextStrict(row[6]));
     }
 
     @Override
