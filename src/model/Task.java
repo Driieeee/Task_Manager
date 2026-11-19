@@ -73,7 +73,12 @@ public final class Task {
 
     public boolean isDueSoon() {
         long daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), deadline);
-        return daysLeft <= 1 && !status.isDone();
+        return daysLeft >= 0 && daysLeft <= 1 && !status.isDone();
+    }
+
+    public boolean isOverDue() {
+        long daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), deadline);
+        return daysLeft < 0 && !status.isDone();
     }
 
     public String getId() {
